@@ -1,0 +1,147 @@
+;Load co-ordinate system definitions for bender mirror
+CLOSE
+
+;################################################
+;; \file
+;; Define single bending mirror actuator to radius of curvature translation
+;;
+;; Author: Ronaldo Mercado
+;;
+;; Defined axes:
+;; - X (addr 6) = Radius of curvature in km
+;;
+;; Macros
+;; - COORD = 2  CS number, e.g. 2
+;; - PLC = 17  PLC number, should be CS number+15, e.g. 17
+;; - J1 = 1  Axisnum for bending actuator
+;; - SLOPE = 0.08652846   slope [1/Km / mm ]
+;; - INTERCEPT = 0.008426519   intercept [1/Km]
+;; - LIMIT = 1000   [Km] where the CS stops operating
+;;
+;; This CS relies on the fit presented in SCI-OPT-REP-0058
+;; where 1/R is ~ linear with the number of counts
+;################################################
+
+; The CS axis is the radius of curvature with
+; EGU in Km.
+; There is a discontinuity in R when 1/R is zero
+;
+; Change to CS2
+&2
+; The fit provided by metrology
+; 1/R = SLOPE * J1 + INTERCEPT
+; slope [1/Km / mm ]
+#define SLOPE Q20
+; intercept [1/Km]
+#define INTERCEPT Q21
+; Limit where CS stops operating [Km]
+#define LIMIT Q22
+SLOPE = 0.08652846
+INTERCEPT = 0.008426519
+LIMIT = 1000
+
+; These are set by motor_in_cs.template
+#define J1MOVE P(4700+1)
+#define J1MRES P(4800+1)
+#define J1OFF  P(4900+1)
+
+; Set relevant axes to use kinematics
+#1->I ; actuator
+
+; Calculate radius of curvature from jack position
+#define J1POS (J1MRES*P1+J1OFF)
+#define RADIUS Q7
+#define SETERROR M(100*2+5082)=1
+OPEN FORWARD
+CLEAR
+    ; This is the radius. Has singularity (Inf) at TRANSLATION = -INTERCEPT/SLOPE
+    IF ( ABS(J1POS+INTERCEPT/SLOPE) !< ABS(1/LIMIT/SLOPE) )
+        RADIUS=1.0/(SLOPE *J1POS + INTERCEPT)
+    ELSE
+        SETERROR
+    ENDIF
+CLOSE
+
+; work out the actuator position from the radius of curvature
+#define J1POS Q228
+OPEN INVERSE
+CLEAR
+    ; calc in EGUs
+    J1POS=((1/RADIUS-INTERCEPT))/SLOPE
+    ; then in cts
+    P1=(J1POS-J1OFF)/J1MRES
+CLOSE
+
+; A PLC(sx+15) needs to be made to do position reporting
+; Readbacks should be in &{axisnum}Q81..89
+; As forward kinematic, but with Px = mx62/(Ix08*32)
+#define J1POS (J1MRES*m162/(I108*32)+J1OFF)
+#define RADIUS Q87
+OPEN PLC17
+CLEAR
+    ADDRESS&2
+    ; This is the radius. Has singularity (Inf) at J1POS = -INTERCEPT/SLOPE
+    IF ( ABS(J1POS+INTERCEPT/SLOPE) !< ABS(1/LIMIT/SLOPE) )
+        RADIUS=1.0/(SLOPE *J1POS + INTERCEPT)
+    ENDIF
+    ; If actuator motor record did the last move, set demands = readbacks
+    ; This is not really needed as there is only one axis, but we'll put it
+    ; in just in case
+    if (J1MOVE = 1)
+        J1MOVE = 0
+        Q77 = Q87
+    endif
+CLOSE
+ENABLE PLC17
+
+CLOSE
+
+;####################################################
+; Generic program for moving any co-ordinate system
+; Original Author: Tom Cobb
+; Used variables: Q71..Q79, Q81..Q89
+; You should do a $$$ or type the following the first time you load this prog.
+; If you type the commands in, ignore any errors. If you $$$, PLC1 will do it
+; automatically for you at startup:
+;&16 DEFINE LOOKAHEAD 50,10
+;&15 DEFINE LOOKAHEAD 50,10
+;&14 DEFINE LOOKAHEAD 50,10
+;&13 DEFINE LOOKAHEAD 50,10
+;&12 DEFINE LOOKAHEAD 50,10
+;&11 DEFINE LOOKAHEAD 50,10
+;&10 DEFINE LOOKAHEAD 50,10
+;&9 DEFINE LOOKAHEAD 50,10
+;&8 DEFINE LOOKAHEAD 50,10
+;&7 DEFINE LOOKAHEAD 50,10
+;&6 DEFINE LOOKAHEAD 50,10
+;&5 DEFINE LOOKAHEAD 50,10
+;&4 DEFINE LOOKAHEAD 50,10
+;&3 DEFINE LOOKAHEAD 50,10
+;&2 DEFINE LOOKAHEAD 50,10
+;####################################################
+
+;This program defines the program needed to do a move using the motor record
+;on a CS axis
+;to do a move we need to do &{CS}R
+;to stop a move we need to do &{CS}A
+;demand values are in &{CS}Q71..79
+;The following are set by the motor record:
+;Isx87 = Acceleration
+;Isx88 = S curve
+;Isx89 = Feedrate
+
+; Set some defaults for all CS axes
+i5213,15,100=50   ; segmentation time (needed for lookahead)
+i5220,15,100=50   ; lookahead length (needed to limit max velocity to max set in CS)
+i5250,15,100=1    ; Enable kinematics
+
+OPEN PROG 10
+CLEAR
+LINEAR
+ABS
+; need to think about the consequences of including all axes in frax
+FRAX(A,B,C,U,V,W,X,Y,Z)
+A(Q71)B(Q72)C(Q73)U(Q74)V(Q75)W(Q76)X(Q77)Y(Q78)Z(Q79)
+DWELL0
+CLOSE
+

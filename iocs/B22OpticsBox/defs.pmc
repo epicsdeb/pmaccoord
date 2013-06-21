@@ -1,0 +1,217 @@
+; Angles in rad
+i15=1
+
+CLOSE
+
+;###############################################
+; Define motion of B22's optics box
+; Original Author: Tom Cobb
+; Defined axes:
+;   W (addr 5) = Xexit in same EGUs as actuators
+;   X (addr 6) = Yexit in same EGUs as actuators
+;   Y (addr 7) = ThetaExit in i15 EGUs
+;   Z (addr 8) = PhiExit in i15 EGUs
+; Macros (and example values):
+;   COORD = 2 ;CS number (only works for CS 1..9), e.g. 2
+;   PLC = 17 ;PLC number, should be CS number+15, e.g. 17
+;   M9PITCH = 1 ;Axisnum for M9 pitch actuator, e.g. 1
+;   M9ROLL = 2 ;Axisnum for M9 roll actuator, e.g. 2
+;   XM9 = 50 ;Lateral distance between actuator and pivot ball on M9 in mm
+;   YM9 = 50 ;Distance between M9 pitch actuator and pivot ball on M9 in mm
+;   M10PITCH = 3 ;Axisnum for M10 pitch actuator, e.g. 3
+;   M10ROLL = 4 ;Axisnum for M10 roll actuator, e.g. 4
+;   XM10 = 50 ;Lateral distance between actuator and pivot ball on M10 in mm
+;   YM10 = 50 ;Distance between M10 pitch actuator and pivot ball on M10 in mm
+;   LM9M10 = 400 ;Distance between M9 and M10 centres in mm
+;################################################
+
+; Change to CS2
+&2
+
+; Set relevant axes to use kinematics
+#1->I
+#2->I
+#3->I
+#4->I
+
+; These are set by motor_in_cs.template
+#define M9PITCHMOVE P(4700+1)
+#define M9PITCHMRES P(4800+1)
+#define M9PITCHOFF  P(4900+1)
+#define M9ROLLMOVE P(4700+2)
+#define M9ROLLMRES P(4800+2)
+#define M9ROLLOFF  P(4900+2)
+#define M10PITCHMOVE P(4700+3)
+#define M10PITCHMRES P(4800+3)
+#define M10PITCHOFF  P(4900+3)
+#define M10ROLLMOVE P(4700+4)
+#define M10ROLLMRES P(4800+4)
+#define M10ROLLOFF  P(4900+4)
+
+; Setup the inputs, all are in mm
+#define XM9      Q20
+#define YM9      Q21
+#define XM10     Q22
+#define YM10     Q23
+#define LM9M10   Q24
+XM9 = 50
+YM9 = 50
+XM10 = 50
+YM10 = 50
+LM9M10 = 400
+
+; Calculate exit X, Y, Theta, and Phi from actuator positions
+#define M9PITCHPOS (M9PITCHMRES*P1+M9PITCHOFF)
+#define M9ROLLPOS (M9ROLLMRES*P2+M9ROLLOFF)
+#define M10PITCHPOS (M10PITCHMRES*P3+M10PITCHOFF)
+#define M10ROLLPOS (M10ROLLMRES*P4+M10ROLLOFF)
+#define XEXIT     Q6
+#define YEXIT     Q7
+#define THETAEXIT Q8
+#define PHIEXIT   Q9
+; Local variables
+#define THETAM9  Q128
+#define PHIM9    Q129
+#define THETAM10 Q130
+#define PHIM10   Q131
+OPEN FORWARD
+CLEAR
+    ; get angles from actuators
+    THETAM9 = M9PITCHPOS * 1000 / XM9
+    PHIM9 = M9ROLLPOS * 1000 / YM9
+    THETAM10 = M10PITCHPOS * 1000 / XM10
+    PHIM10 = M10ROLLPOS * 1000 / YM10
+    ; calculate exit values from angles
+    XEXIT = (THETAM9 * LM9M10) / 1000
+    YEXIT = (PHIM9 * LM9M10) / 1000
+    THETAEXIT = 2 * (THETAM9 + THETAM10)
+    PHIEXIT = 2 * (PHIM9 + PHIM10)
+CLOSE
+
+; Calculate actuator positions from exit X, Y, Theta, and Phi
+; Local variables
+#define THETAM9  Q228
+#define PHIM9    Q229
+#define THETAM10 Q230
+#define PHIM10   Q231
+#define M9PITCHPOS Q232
+#define M9ROLLPOS Q233
+#define M10PITCHPOS Q234
+#define M10ROLLPOS Q235
+OPEN INVERSE
+CLEAR
+    ; get angles from exit
+    THETAM9 = XEXIT * 1000 / LM9M10
+    PHIM9 = YEXIT * 1000 / LM9M10
+    THETAM10 = (THETAEXIT - 2 * THETAM9) / 2
+    PHIM10 = (PHIEXIT - 2 * PHIM9) / 2
+    ; calculate actuator values from angles in EGUs
+    M9PITCHPOS = THETAM9 * XM9 / 1000
+    M9ROLLPOS = PHIM9 * YM9 / 1000
+    M10PITCHPOS = THETAM10 * XM10 / 1000
+    M10ROLLPOS = PHIM10 * YM10 / 1000
+    ; then in cts
+    P1 = (M9PITCHPOS - M9PITCHOFF) / M9PITCHMRES
+    P2 = (M9ROLLPOS - M9ROLLOFF) / M9ROLLMRES
+    P3 = (M10PITCHPOS - M10PITCHOFF) / M10PITCHMRES
+    P4 = (M10ROLLPOS - M10ROLLOFF) / M10ROLLMRES
+CLOSE
+
+; A PLC(sx+15) needs to be made to do position reporting
+; Readbacks should be in &{axisnum}Q81..89
+; As forward kinematic, but with Px = mx62/(Ix08*32)
+#define M9PITCHPOS (M9PITCHMRES*m162/(I108*32)+M9PITCHOFF)
+#define M9ROLLPOS (M9ROLLMRES*m262/(I208*32)+M9ROLLOFF)
+#define M10PITCHPOS (M10PITCHMRES*m362/(I308*32)+M10PITCHOFF)
+#define M10ROLLPOS (M10ROLLMRES*m462/(I408*32)+M10ROLLOFF)
+#define XEXIT     Q86
+#define YEXIT     Q87
+#define THETAEXIT Q88
+#define PHIEXIT   Q89
+; Local variables
+#define THETAM9  Q328
+#define PHIM9    Q329
+#define THETAM10 Q330
+#define PHIM10   Q331
+OPEN PLC 17
+CLEAR
+    ADDRESS&2
+    ; get angles from actuators
+    THETAM9 = M9PITCHPOS * 1000 / XM9
+    PHIM9 = M9ROLLPOS * 1000 / YM9
+    THETAM10 = M10PITCHPOS * 1000 / XM10
+    PHIM10 = M10ROLLPOS * 1000 / YM10
+    ; calculate exit values from angles
+    XEXIT = (THETAM9 * LM9M10) / 1000
+    YEXIT = (PHIM9 * LM9M10) / 1000
+    THETAEXIT = 2 * (THETAM9 + THETAM10)
+    PHIEXIT = 2 * (PHIM9 + PHIM10)
+    ; If actuator motor record did the last move, set demands = readbacks
+    if (M9PITCHMOVE = 1)
+    or (M9ROLLMOVE = 1)
+    or (M10PITCHMOVE = 1)
+    or (M10ROLLMOVE = 1)
+        M9PITCHMOVE = 0
+        M9ROLLMOVE = 0
+        M10PITCHMOVE = 0
+        M10ROLLMOVE = 0
+        Q76 = Q86
+        Q77 = Q87
+        Q78 = Q88
+        Q79 = Q89
+    endif
+CLOSE
+ENABLE PLC 17
+
+
+CLOSE
+
+;####################################################
+; Generic program for moving any co-ordinate system
+; Original Author: Tom Cobb
+; Used variables: Q71..Q79, Q81..Q89
+; You should do a $$$ or type the following the first time you load this prog.
+; If you type the commands in, ignore any errors. If you $$$, PLC1 will do it
+; automatically for you at startup:
+;&16 DEFINE LOOKAHEAD 50,10
+;&15 DEFINE LOOKAHEAD 50,10
+;&14 DEFINE LOOKAHEAD 50,10
+;&13 DEFINE LOOKAHEAD 50,10
+;&12 DEFINE LOOKAHEAD 50,10
+;&11 DEFINE LOOKAHEAD 50,10
+;&10 DEFINE LOOKAHEAD 50,10
+;&9 DEFINE LOOKAHEAD 50,10
+;&8 DEFINE LOOKAHEAD 50,10
+;&7 DEFINE LOOKAHEAD 50,10
+;&6 DEFINE LOOKAHEAD 50,10
+;&5 DEFINE LOOKAHEAD 50,10
+;&4 DEFINE LOOKAHEAD 50,10
+;&3 DEFINE LOOKAHEAD 50,10
+;&2 DEFINE LOOKAHEAD 50,10
+;####################################################
+
+;This program defines the program needed to do a move using the motor record
+;on a CS axis
+;to do a move we need to do &{CS}R
+;to stop a move we need to do &{CS}A
+;demand values are in &{CS}Q71..79
+;The following are set by the motor record:
+;Isx87 = Acceleration
+;Isx88 = S curve
+;Isx89 = Feedrate
+
+; Set some defaults for all CS axes
+i5213,15,100=50   ; segmentation time (needed for lookahead)
+i5220,15,100=50   ; lookahead length (needed to limit max velocity to max set in CS)
+i5250,15,100=1    ; Enable kinematics
+
+OPEN PROG 10
+CLEAR
+LINEAR
+ABS
+; need to think about the consequences of including all axes in frax
+FRAX(A,B,C,U,V,W,X,Y,Z)
+A(Q71)B(Q72)C(Q73)U(Q74)V(Q75)W(Q76)X(Q77)Y(Q78)Z(Q79)
+DWELL0
+CLOSE
+

@@ -1,0 +1,49 @@
+/**
+\mainpage pmacCoord EPICS Support Module
+\section intro_sec Introduction
+This module contains an asyn motor driver for Delta Tau PMAC co-ordinate systems
+(CS), along with some sample CS definitions. This allows the programmer to set
+axes to move in a synchronised fashion according to arbitrary mathematical 
+transfer functions. For instance it allows 3 vertical jacks of a table to scan 
+pitch at a constant velocity, or the bragg and vertical axes of a DCM to scan
+energy linearly. There is a great deal of information on writing CSs in the
+<a href="http://www.deltatau.com/manuals/pdfs/TURBO%20PMAC%20USER%20MANUAL.pdf">
+Delta Tau Turbo PMAC User Manual</a> p275 (Coordinate-System Kinematic Calculations).
+This documentation will not cover this in detail, but will focus on how to setup
+the EPICS driver and associated databases.
+
+\section build_sec Build
+Make sure you have the following modules built and defined in configure/RELEASE:
+- asyn
+- motor
+- tpmac
+- streamDevice
+
+There is an example IOC for each available CS in the iocs/ directory. 
+Initially, it is recommended you comment out the build of the examples in the 
+Makefile in the directory root, then try and build the module. You can they try 
+changing the configure/RELEASE file and building an example. Each IOC contains
+a file defs.pmc in the root which contains an instantiated pmc file with the
+CS definitions that can be loaded onto a PMAC using PEWinPro
+
+\section driver_sec CS Driver
+To see detailed information on how the EPICS driver communicates to the lower
+level see:
+- pmacAsynCoord.c
+
+\section CS_sec Supplied CS definitions
+The following co-ordinate system definitions are supplied, you can use these
+as is, or as a template for writing your own. Make sure you read the 
+<a href="../BLS-GEN-CTRL-0005.doc">DLS PMAC Programming Standards</a>
+document before writing your own.
+- \ref accel_dcm.vdb "DCM with bragg axis and vertical translation"
+- 2jack.vdb - Two jack table
+- 3jack.vdb - Three jack table
+- 3jack_mirror.vdb - Three jack table with a mirror on top
+- \ref aperture_slits.vdb "Aperture slits"
+- \ref bender.vdb "Mirror bender"
+- \ref blade_slits.vdb "Blade slits"
+- \ref flexure_slits.vdb "Flexure slits"
+- \ref gap_and_centre_slits.vdb "Gap and centre slits"
+**/
+

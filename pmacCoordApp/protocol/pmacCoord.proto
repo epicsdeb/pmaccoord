@@ -1,0 +1,70 @@
+# Streams protocol file for the pmacStreams protocol
+# Initial version NPR 04/2006
+
+# use "streamReload" to reload this file without restarting the IOC
+
+ExtraInput = Ignore;
+ReadTimeout = 500;
+OutTerminator = "";
+InTerminator = ACK;
+Separator = CR;
+
+getVar
+{
+  out "\$1" CR;
+  in  "%f" CR;
+}
+
+setVar
+{
+  out "\$1=%f" CR;
+  in;
+}
+
+getIntVar
+{
+  out "\$1" CR;
+  in  "%d" CR;
+}
+
+setIntVar
+{
+  out "\$1=%d" CR;
+  in;
+}
+
+getHexVar
+{
+  out "\$1" CR;
+  in  "$%x" CR;
+}
+
+setHexVar
+{
+  out "\$1=$%x" CR;
+  in;
+}
+
+sendString
+{
+  out "%s" CR;
+  in;
+}
+
+moveWrite
+{
+  out "P47%(\$1:ADDR.VAL)02d=1" CR;
+  in;
+}
+
+mresWrite
+{
+  out "P48%(\$1:ADDR.VAL)02d=%.12f" CR;
+  in;
+}
+
+offWrite
+{
+  out "P49%(\$1:ADDR.VAL)02d=%.12f" CR;
+  in;
+}

@@ -1,0 +1,211 @@
+CLOSE
+
+;################################################
+;; \file
+;; Define motion for 2 slit blades
+;;
+;; Original Author: Tom Cobb
+;;
+;; Defined axes:
+;; - X (addr 6) = centre in same EGUs as blade
+;; - Y (addr 7) = gap in same EGUs as blade
+;;
+;; Macros:
+;; - COORD = 2  CS number, e.g. 2
+;; - PLC = 17  PLC number, should be CS number+15, e.g. 17
+;; - BP = 1  Axisnum for Blade+, e.g. 1
+;; - BM = 3  Axisnum for Blade-, e.g. 3
+;################################################
+
+; Change to CS2
+&2
+
+; Set relevant axes to use kinematics
+#1->I ; +ve blade
+#3->I ; -ve blade
+
+; These are set by motor_in_cs.template
+#define BPMOVE P(4700+1)
+#define BPMRES P(4800+1)
+#define BPOFF  P(4900+1)
+#define BMMOVE P(4700+3)
+#define BMMRES P(4800+3)
+#define BMOFF  P(4900+3)
+
+; Calculate gap and centre from blade positions
+#define BPPOS (BPMRES*P1+BPOFF)
+#define BMPOS (BMMRES*P3+BMOFF)
+#define CENTRE Q7
+#define GAP Q8
+OPEN FORWARD
+CLEAR
+    CENTRE = (BPPOS + BMPOS)/2
+    GAP = BPPOS - BMPOS
+CLOSE
+
+; Calculate blade positions in cts from gap and centre
+#define BPPOS Q228
+#define BMPOS Q229
+OPEN INVERSE
+CLEAR
+    ; calculate in EGUs
+    BPPOS = CENTRE + GAP/2
+    BMPOS = CENTRE - GAP/2
+    ; then in cts
+    P1 = (BPPOS - BPOFF)/BPMRES
+    P3 = (BMPOS - BMOFF)/BMMRES
+CLOSE
+
+; A PLC(sx+15) needs to be made to do position reporting
+; Readbacks should be in &{axisnum}Q81..89
+; As forward kinematic, but with Px = mx62/(Ix08*32)
+#define BPPOS (BPMRES*m162/(I108*32)+BPOFF)
+#define BMPOS (BMMRES*m362/(I308*32)+BMOFF)
+#define CENTRE Q87
+#define GAP Q88
+OPEN PLC17
+CLEAR
+    ADDRESS&2
+    CENTRE = (BPPOS + BMPOS)/2
+    GAP = BPPOS - BMPOS
+    ; If blade motor record did the last move, set demands = readbacks
+    if (BPMOVE = 1)
+    or (BMMOVE = 1)
+        BPMOVE = 0
+        BMMOVE = 0
+        Q77 = Q87
+        Q78 = Q88
+    endif
+CLOSE
+ENABLE PLC17
+CLOSE
+
+;################################################
+;; \file
+;; Define motion for 2 slit blades
+;;
+;; Original Author: Tom Cobb
+;;
+;; Defined axes:
+;; - X (addr 6) = centre in same EGUs as blade
+;; - Y (addr 7) = gap in same EGUs as blade
+;;
+;; Macros:
+;; - COORD = 3  CS number, e.g. 2
+;; - PLC = 18  PLC number, should be CS number+15, e.g. 17
+;; - BP = 2  Axisnum for Blade+, e.g. 1
+;; - BM = 4  Axisnum for Blade-, e.g. 3
+;################################################
+
+; Change to CS3
+&3
+
+; Set relevant axes to use kinematics
+#2->I ; +ve blade
+#4->I ; -ve blade
+
+; These are set by motor_in_cs.template
+#define BPMOVE P(4700+2)
+#define BPMRES P(4800+2)
+#define BPOFF  P(4900+2)
+#define BMMOVE P(4700+4)
+#define BMMRES P(4800+4)
+#define BMOFF  P(4900+4)
+
+; Calculate gap and centre from blade positions
+#define BPPOS (BPMRES*P2+BPOFF)
+#define BMPOS (BMMRES*P4+BMOFF)
+#define CENTRE Q7
+#define GAP Q8
+OPEN FORWARD
+CLEAR
+    CENTRE = (BPPOS + BMPOS)/2
+    GAP = BPPOS - BMPOS
+CLOSE
+
+; Calculate blade positions in cts from gap and centre
+#define BPPOS Q228
+#define BMPOS Q229
+OPEN INVERSE
+CLEAR
+    ; calculate in EGUs
+    BPPOS = CENTRE + GAP/2
+    BMPOS = CENTRE - GAP/2
+    ; then in cts
+    P2 = (BPPOS - BPOFF)/BPMRES
+    P4 = (BMPOS - BMOFF)/BMMRES
+CLOSE
+
+; A PLC(sx+15) needs to be made to do position reporting
+; Readbacks should be in &{axisnum}Q81..89
+; As forward kinematic, but with Px = mx62/(Ix08*32)
+#define BPPOS (BPMRES*m262/(I208*32)+BPOFF)
+#define BMPOS (BMMRES*m462/(I408*32)+BMOFF)
+#define CENTRE Q87
+#define GAP Q88
+OPEN PLC18
+CLEAR
+    ADDRESS&3
+    CENTRE = (BPPOS + BMPOS)/2
+    GAP = BPPOS - BMPOS
+    ; If blade motor record did the last move, set demands = readbacks
+    if (BPMOVE = 1)
+    or (BMMOVE = 1)
+        BPMOVE = 0
+        BMMOVE = 0
+        Q77 = Q87
+        Q78 = Q88
+    endif
+CLOSE
+ENABLE PLC18
+CLOSE
+
+;####################################################
+; Generic program for moving any co-ordinate system
+; Original Author: Tom Cobb
+; Used variables: Q71..Q79, Q81..Q89
+; You should do a $$$ or type the following the first time you load this prog.
+; If you type the commands in, ignore any errors. If you $$$, PLC1 will do it
+; automatically for you at startup:
+;&16 DEFINE LOOKAHEAD 50,10
+;&15 DEFINE LOOKAHEAD 50,10
+;&14 DEFINE LOOKAHEAD 50,10
+;&13 DEFINE LOOKAHEAD 50,10
+;&12 DEFINE LOOKAHEAD 50,10
+;&11 DEFINE LOOKAHEAD 50,10
+;&10 DEFINE LOOKAHEAD 50,10
+;&9 DEFINE LOOKAHEAD 50,10
+;&8 DEFINE LOOKAHEAD 50,10
+;&7 DEFINE LOOKAHEAD 50,10
+;&6 DEFINE LOOKAHEAD 50,10
+;&5 DEFINE LOOKAHEAD 50,10
+;&4 DEFINE LOOKAHEAD 50,10
+;&3 DEFINE LOOKAHEAD 50,10
+;&2 DEFINE LOOKAHEAD 50,10
+;####################################################
+
+;This program defines the program needed to do a move using the motor record
+;on a CS axis
+;to do a move we need to do &{CS}R
+;to stop a move we need to do &{CS}A
+;demand values are in &{CS}Q71..79
+;The following are set by the motor record:
+;Isx87 = Acceleration
+;Isx88 = S curve
+;Isx89 = Feedrate
+
+; Set some defaults for all CS axes
+i5213,15,100=50   ; segmentation time (needed for lookahead)
+i5220,15,100=50   ; lookahead length (needed to limit max velocity to max set in CS)
+i5250,15,100=1    ; Enable kinematics
+
+OPEN PROG 10
+CLEAR
+LINEAR
+ABS
+; need to think about the consequences of including all axes in frax
+FRAX(A,B,C,U,V,W,X,Y,Z)
+A(Q71)B(Q72)C(Q73)U(Q74)V(Q75)W(Q76)X(Q77)Y(Q78)Z(Q79)
+DWELL0
+CLOSE
+
