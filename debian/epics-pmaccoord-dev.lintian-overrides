@@ -1,0 +1,4 @@
+epics-pmaccoord-dev: script-not-executable
+epics-pmaccoord-dev: postinst-has-useless-call-to-ldconfig
+epics-pmaccoord-dev: postrm-has-useless-call-to-ldconfig
+epics-pmaccoord-dev: unstripped-binary-or-object
