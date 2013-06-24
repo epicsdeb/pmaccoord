@@ -1,0 +1,90 @@
+From 8ef91fcf9e16586ada756b6f7ec507bea45a288c Mon Sep 17 00:00:00 2001
+From: Daron Chabot <dchabot@bnl.gov>
+Date: Mon, 24 Jun 2013 16:19:50 -0400
+Subject: [PATCH] Configure for local packaging.
+
+---
+ Makefile              |    4 ++--
+ configure/CONFIG      |    2 +-
+ configure/RELEASE     |   14 +++++++-------
+ pmacCoordApp/Makefile |   10 +++++-----
+ 4 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index acbf5c2..7677117 100644
+--- a/Makefile
++++ b/Makefile
+@@ -7,7 +7,7 @@ DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *app))
+ DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard iocBoot))
+ DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard iocboot))
+ # Comment out the following line to creation of example iocs and documentation
+-DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard etc))
++#DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard etc))
+ # Comment out the following line to disable building of example iocs
+-DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard iocs))
++#DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard iocs))
+ include $(TOP)/configure/RULES_TOP
+diff --git a/configure/CONFIG b/configure/CONFIG
+index 64b199c..87010c7 100644
+--- a/configure/CONFIG
++++ b/configure/CONFIG
+@@ -7,7 +7,7 @@ include $(TOP)/configure/CONFIG_APP
+ # Set this when you only want to compile this application
+ # for a subset of the cross-compiled target architectures
+ # that Base is built for.
+-CROSS_COMPILER_TARGET_ARCHS = vxWorks-ppc604_long
++#CROSS_COMPILER_TARGET_ARCHS = vxWorks-ppc604_long
+ 
+ # To restrict the build to a list *without* the host arch,
+ # redefine BUILD_ARCHS here, to included only those archs to build
+diff --git a/configure/RELEASE b/configure/RELEASE
+index d6cb3e1..c3e195c 100644
+--- a/configure/RELEASE
++++ b/configure/RELEASE
+@@ -14,16 +14,16 @@ TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
+ # define INSTALL_LOCATION_APP here
+ #INSTALL_LOCATION_APP=<fullpathname>
+ 
+-WORK=           /dls_sw/work/R3.14.11/support
+-SUPPORT=        /dls_sw/prod/R3.14.11/support
++#WORK=           /dls_sw/work/R3.14.11/support
++#SUPPORT=        /dls_sw/prod/R3.14.11/support
+ 
+-ASYN=       $(SUPPORT)/asyn/4-17
+-MOTOR=      $(SUPPORT)/motor/6-7-1dls2
+-CALC=       $(SUPPORT)/calc/2-8dls4
+-STREAMDEVICE=$(SUPPORT)/streamDevice/2-5
++#ASYN=       $(SUPPORT)/asyn/4-17
++#MOTOR=      $(SUPPORT)/motor/6-7-1dls2
++#CALC=       $(SUPPORT)/calc/2-8dls4
++#STREAMDEVICE=$(SUPPORT)/streamDevice/2-5
+ 
+ # EPICS_BASE usually appears last so other apps can override stuff:
+-EPICS_BASE=/dls_sw/epics/R3.14.11/base
++EPICS_BASE=/usr/lib/epics
+ 
+ #Capfast users may need the following definitions
+ #CAPFAST_TEMPLATES=
+diff --git a/pmacCoordApp/Makefile b/pmacCoordApp/Makefile
+index 5b1472b..c5f0aee 100644
+--- a/pmacCoordApp/Makefile
++++ b/pmacCoordApp/Makefile
+@@ -2,10 +2,10 @@ TOP = ..
+ include $(TOP)/configure/CONFIG
+ DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *src*))
+ DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *Src*))
+-DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *db*))
+-DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *Db*))
+-DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *opi*))
+-DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *pmc*))
+-DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard protocol))
++#DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *db*))
++#DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *Db*))
++#DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *opi*))
++#DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard *pmc*))
++#DIRS := $(DIRS) $(filter-out $(DIRS), $(wildcard protocol))
+ include $(TOP)/configure/RULES_DIRS
+ 
+-- 
+1.7.2.5
+
