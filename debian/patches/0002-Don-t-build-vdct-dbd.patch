@@ -1,0 +1,28 @@
+From e4d441bf265b5bef8f4f9200e3ffeaab5d76db6d Mon Sep 17 00:00:00 2001
+From: Daron Chabot <dchabot@bnl.gov>
+Date: Mon, 24 Jun 2013 20:02:48 -0400
+Subject: [PATCH 2/2] Don't build vdct dbd.
+
+---
+ pmacCoordApp/src/Makefile |    5 -----
+ 1 files changed, 0 insertions(+), 5 deletions(-)
+
+diff --git a/pmacCoordApp/src/Makefile b/pmacCoordApp/src/Makefile
+index 030b5df..d336259 100644
+--- a/pmacCoordApp/src/Makefile
++++ b/pmacCoordApp/src/Makefile
+@@ -2,11 +2,6 @@ TOP=../..
+ include $(TOP)/configure/CONFIG
+ 
+ DBD += pmacAsynCoord.dbd
+-DBD += pmacCoord_vdct.dbd
+-pmacCoord_vdct_DBD += base.dbd
+-pmacCoord_vdct_DBD += asyn.dbd
+-pmacCoord_vdct_DBD += stream.dbd
+-pmacCoord_vdct_DBD += calcSupport.dbd
+ 
+ LIBRARY = pmacAsynCoord
+ pmacAsynCoord_SRCS = pmacAsynCoord.c pmacAsynCoordRegister.cc
+-- 
+1.7.2.5
+
