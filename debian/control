@@ -25,6 +25,7 @@ Description: Library for control of PMAC CS from EPICS.
 Package: epics-pmaccoord-dev
 Architecture: any
 Depends: libpmaccoord1.11 (= ${binary:Version}),
+            epics-pmacasyn-dev (>= 3.10.12-3~),
             epics-synapps-dev (>= 20141009),
             ${shlibs:Depends}, ${misc:Depends}
 Description: Support for controlling Delta Tau PMAC CS from EPICS.
