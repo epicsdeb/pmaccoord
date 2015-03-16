@@ -3,9 +3,9 @@ Section: devel
 Priority: extra
 Maintainer: Daron Chabot <dchabot@bnl.gov>
 Build-Depends: debhelper (>= 7.0.50~), epics-debhelper (>= 6~),
-                epics-synapps-dev (>= 20130320), 
-                rtems-synapps-mvme3100 (>= 20130320), 
-Standards-Version: 3.9.1
+                epics-synapps-dev (>= 20141009), 
+                rtems-synapps-mvme3100 (>= 20141009), 
+Standards-Version: 3.9.4
 X-Rtems-Build-Depends: rtems-epics, rtems-synapps,
 Homepage: http://controls.diamond.ac.uk/downloads/support/pmacCoord
 #Vcs-Git: git://git.debian.org/collab-maint/pmaccoord.git
@@ -13,7 +13,7 @@ Homepage: http://controls.diamond.ac.uk/downloads/support/pmacCoord
 Package: libpmaccoord1.11
 Section: libs
 Architecture: any
-Depends: epics-synapps-dev (>= 20130320),
+Depends: epics-synapps-dev (>= 20141009),
          ${shlibs:Depends}, ${misc:Depends}
 Recommends: epics-pmaccoord-dev (= ${binary:Version})
 Description: Library for control of PMAC CS from EPICS.
@@ -25,7 +25,7 @@ Description: Library for control of PMAC CS from EPICS.
 Package: epics-pmaccoord-dev
 Architecture: any
 Depends: libpmaccoord1.11 (= ${binary:Version}),
-            epics-synapps-dev (>= 20130320),
+            epics-synapps-dev (>= 20141009),
             ${shlibs:Depends}, ${misc:Depends}
 Description: Support for controlling Delta Tau PMAC CS from EPICS.
  Contains support files (*.dbd) necessary for creating IOC programs
@@ -35,7 +35,7 @@ Description: Support for controlling Delta Tau PMAC CS from EPICS.
 Package: rtems-pmaccoord-mvme3100
 Architecture: any
 Depends: epics-pmaccoord-dev (= ${binary:Version}),
-        rtems-synapps-mvme3100 (>= 20130320), ${misc:Depends}
+        rtems-synapps-mvme3100 (>= 20141009), ${misc:Depends}
 Description: pmaccoord support for the mvme3100
  This library contains support for interfacing Delta Tau PMAC
  Coordinate Systems with the EPICS Motor Record.

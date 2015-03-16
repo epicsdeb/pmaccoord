@@ -1,3 +1,9 @@
+pmaccoord (1.11-2) unstable; urgency=low
+
+  * Compatibility fixes with synApps Motor 6.8.1 (libsynapps20141009).
+
+ -- Daron Chabot <dchabot@bnl.gov>  Sun, 15 Mar 2015 20:26:19 -0400
+
 pmaccoord (1.11-1) unstable; urgency=low
 
   * Initial release 
