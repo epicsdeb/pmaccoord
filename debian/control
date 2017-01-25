@@ -2,10 +2,10 @@ Source: pmaccoord
 Section: devel
 Priority: extra
 Maintainer: Daron Chabot <dchabot@bnl.gov>
-Build-Depends: debhelper (>= 7.0.50~), epics-debhelper (>= 6~),
+Build-Depends: debhelper (>= 9), epics-debhelper (>= 8.14~),
                 epics-synapps-dev (>= 20141009), 
                 rtems-synapps-mvme3100 (>= 20141009), 
-Standards-Version: 3.9.4
+Standards-Version: 3.9.6
 X-Rtems-Build-Depends: rtems-epics, rtems-synapps,
 Homepage: http://controls.diamond.ac.uk/downloads/support/pmacCoord
 #Vcs-Git: git://git.debian.org/collab-maint/pmaccoord.git
