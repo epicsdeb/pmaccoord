@@ -1,3 +1,15 @@
+pmaccoord (1.11-3) unstable; urgency=low
+
+  * BLD: simplify rules
+  * BLD: debhelper versions
+  * BLD: omit rtems-mvme3100 pkg
+  * BLD: dependencies
+  * BLD: omit version from lib, pkg naming
+  * CLN: let epics-debhelper do its thing
+  * GIT: ignore file
+
+ -- Daron Chabot <chabot@frib.msu.edu>  Wed, 25 Jan 2017 15:02:05 -0500
+
 pmaccoord (1.11-2) unstable; urgency=low
 
   * Compatibility fixes with synApps Motor 6.8.1 (libsynapps20141009).
