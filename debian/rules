@@ -1,33 +1,9 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
-# Sample debian/rules that uses debhelper.
-# This file was originally written by Joey Hess and Craig Small.
-# As a special exception, when this file is copied by dh-make into a
-# dh-make output file, you may use that output file without restriction.
-# This special exception was added by Craig Small in version 0.37 of dh-make.
 
-# Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
 
-DEB_USR_CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS)
-DEB_USR_CFLAGS:=$(shell dpkg-buildflags --get CFLAGS)
-DEB_USR_CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
-DEB_USR_LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
-
 %:
-	dh  $@ --with epics -Sepicsmake
+	dh $@ --with epics -Sepicsmake --parallel
 
 override_dh_install:
-	rm -rf debian/tmp/usr/lib/epics/configure
 	dh_install --fail-missing
-
-override_dh_auto_build:
-	dh_auto_build -- \
-	USR_CFLAGS_Linux="$(DEB_USR_CFLAGS)" \
-	USR_CXXFLAGS_Linux="$(DEB_USR_CXXFLAGS)" \
-	USR_CPPFLAGS_Linux="$(DEB_USR_CPPFLAGS)" \
-	USR_LDFLAGS_Linux="$(DEB_USR_LDFLAGS)"
-
-override_dh_auto_install:
-	dh_auto_install -- \
-	USR_LDFLAGS_Linux="$(DEB_USR_LDFLAGS)"
