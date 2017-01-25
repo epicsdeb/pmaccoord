@@ -9,20 +9,9 @@ Build-Depends: debhelper (>= 9), epics-debhelper (>= 8.14~),
 Standards-Version: 3.9.6
 Homepage: http://controls.diamond.ac.uk/downloads/support/pmacCoord
 
-Package: libpmaccoord1.11
-Section: libs
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: epics-pmaccoord-dev (= ${binary:Version})
-Description: Library for control of PMAC CS from EPICS.
- This library contains support for interfacing Delta Tau PMAC
- Coordinate Systems with the EPICS Motor Record.
- .
- This package provides shared libraries.
-
 Package: epics-pmaccoord-dev
 Architecture: any
-Depends: libpmaccoord1.11 (= ${binary:Version}),
+Depends: libpmaccoord,
          epics-pmacasyn-dev (>= 3.10.12-9~),
          ${shlibs:Depends}, ${misc:Depends},
          ${epics:Depends},
@@ -30,3 +19,16 @@ Description: Support for controlling Delta Tau PMAC CS from EPICS.
  Contains support files (*.dbd) necessary for creating IOC programs
  to control Delta Tau PMAC Coordinate Systems using the EPICS/synApps
  Motor Record. Example IOCs, *.pmc files, and more is included.
+ .
+ This package provides dbd and headers required by applications.
+
+Package: libpmaccoord
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: epics-pmaccoord-dev
+Description: Library for control of PMAC CS from EPICS.
+ This library contains support for interfacing Delta Tau PMAC
+ Coordinate Systems with the EPICS Motor Record.
+ .
+ This package provides shared libraries.
