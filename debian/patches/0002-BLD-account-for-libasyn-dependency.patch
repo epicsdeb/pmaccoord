@@ -1,17 +1,17 @@
-From e4d441bf265b5bef8f4f9200e3ffeaab5d76db6d Mon Sep 17 00:00:00 2001
-From: Daron Chabot <dchabot@bnl.gov>
-Date: Mon, 24 Jun 2013 20:02:48 -0400
-Subject: [PATCH 2/2] Don't build vdct dbd.
+From c31b8512f4e20c1adeaa90b39d899a71fcbd793e Mon Sep 17 00:00:00 2001
+From: Daron Chabot <chabot@frib.msu.edu>
+Date: Fri, 24 Mar 2017 15:38:12 -0400
+Subject: [PATCH 2/2] BLD: account for libasyn dependency
 
 ---
- pmacCoordApp/src/Makefile |    5 -----
- 1 files changed, 0 insertions(+), 5 deletions(-)
+ pmacCoordApp/src/Makefile | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/pmacCoordApp/src/Makefile b/pmacCoordApp/src/Makefile
-index 030b5df..d336259 100644
+index 030b5df..b57601a 100644
 --- a/pmacCoordApp/src/Makefile
 +++ b/pmacCoordApp/src/Makefile
-@@ -2,11 +2,6 @@ TOP=../..
+@@ -2,13 +2,9 @@ TOP=../..
  include $(TOP)/configure/CONFIG
  
  DBD += pmacAsynCoord.dbd
@@ -22,7 +22,10 @@ index 030b5df..d336259 100644
 -pmacCoord_vdct_DBD += calcSupport.dbd
  
  LIBRARY = pmacAsynCoord
++pmacAsynCoord_LIBS = asyn
  pmacAsynCoord_SRCS = pmacAsynCoord.c pmacAsynCoordRegister.cc
+ 
+ include $(TOP)/configure/RULES
 -- 
-1.7.2.5
+2.1.4
 

@@ -1,2 +1,2 @@
 0001-Configure-for-local-packaging.patch
-0002-Don-t-build-vdct-dbd.patch
+0002-BLD-account-for-libasyn-dependency.patch
