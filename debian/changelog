@@ -1,3 +1,9 @@
+pmaccoord (1.11-4) unstable; urgency=low
+
+  * BLD: account for libasyn dep
+
+ -- Daron Chabot <chabot@frib.msu.edu>  Fri, 24 Mar 2017 15:42:24 -0400
+
 pmaccoord (1.11-3) unstable; urgency=low
 
   * BLD: simplify rules
