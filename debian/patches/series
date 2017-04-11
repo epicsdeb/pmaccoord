@@ -1,2 +1,3 @@
 0001-Configure-for-local-packaging.patch
 0002-BLD-account-for-libasyn-dependency.patch
+0003-BLD-install-db-templates.patch
