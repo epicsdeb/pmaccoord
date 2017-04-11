@@ -1,3 +1,11 @@
+pmaccoord (1.11-5) unstable; urgency=low
+
+  * BLD: revise patch
+  * BLD: install databases patch
+  * BLD: manually copy proto and pmc files
+
+ -- Daron Chabot <chabot@frib.msu.edu>  Tue, 11 Apr 2017 10:37:18 -0400
+
 pmaccoord (1.11-4) unstable; urgency=low
 
   * BLD: account for libasyn dep
