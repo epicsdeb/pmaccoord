@@ -6,4 +6,8 @@ export DH_VERBOSE=1
 	dh $@ --with epics -Sepicsmake --parallel
 
 override_dh_install:
+	mkdir -p debian/epics-pmaccoord-dev/usr/lib/epics/protocol
+	cp pmacCoordApp/protocol/*.proto debian/epics-pmaccoord-dev/usr/lib/epics/protocol/
+	mkdir -p debian/epics-pmaccoord-dev/usr/share/epics-pmaccoord-dev/pmc
+	cp -r pmacCoordApp/pmc/*.pmc debian/epics-pmaccoord-dev/usr/share/epics-pmaccoord-dev/pmc
 	dh_install --fail-missing
