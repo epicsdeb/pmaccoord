@@ -14,18 +14,18 @@ TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
 # define INSTALL_LOCATION_APP here
 #INSTALL_LOCATION_APP=<fullpathname>
 
-WORK=           /dls_sw/work/R3.14.11/support
-SUPPORT=        /dls_sw/prod/R3.14.11/support
+SUPPORT=/epics/src/RHEL8/support
 
-ASYN=       $(SUPPORT)/asyn/4-17
-MOTOR=      $(SUPPORT)/motor/6-7-1dls2
-CALC=       $(SUPPORT)/calc/2-8dls4
-STREAMDEVICE=$(SUPPORT)/streamDevice/2-5
+ASYN=       $(SUPPORT)/asyn
+MOTOR=      $(SUPPORT)/motor
+CALC=       $(SUPPORT)/calc
+STREAM=	    $(SUPPORT)/stream
 
 # EPICS_BASE usually appears last so other apps can override stuff:
-EPICS_BASE=/dls_sw/epics/R3.14.11/base
+EPICS_BASE=/epics/src/RHEL8/support/../base
 
 #Capfast users may need the following definitions
 #CAPFAST_TEMPLATES=
 #SCH2EDIF_PATH=
--include $(TOP)/configure/RELEASE.private
+-include $(TOP)/../RELEASE.local
+-include $(TOP)/configure/RELEASE.local
